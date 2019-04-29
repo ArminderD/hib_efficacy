@@ -9,7 +9,7 @@
 # Extracted data is provided in the csv file (see prepare ).
 # We fit models with different assumptions about waning vaccine efficacy using
 # Rjags. Models are compared visually, and by the DIC value (see)
-rm(list=ls())
+#rm(list=ls())
 library(data.table)
 library(ggplot2)
 library(rjags)

@@ -11,13 +11,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Hib effiacy
 
-The Hib_efficacy code authored by A Deol on Github was derived from the  rotavirus_vaccine_efficacy code authored by K Van Zandvoort. The purpose is to estimate the cumulative vaccine efficacy as well as the instantaneous vaccine effacy - using various methods for the latter. 
+The Hib_efficacy code authored by A Deol on Github was derived from the  rotavirus_vaccine_efficacy code authored by K Van Zandvoort. The purpose is to estimate the cumulative vaccine efficacy as well as the instantaneous vaccine effacy - using various methods for the latter. First plot with 6 panels is the original output
 
 
 
-```{r rotavirus_vaccine_efficacy_index, vaccine_efficacy_data}
+```{r, echo=FALSE}
 library(ggplot2)
 library(gridExtra)
+source("rotavirus_vaccine_efficacy_index.r")
 vaccine_efficacy_data_VE <- vaccine_efficacy_data[ which(vaccine_efficacy_data$mortality=='VE_data'), ]
 vaccine_efficacy_data_iVE <- vaccine_efficacy_data[ which(vaccine_efficacy_data$mortality=='iVE_data'), ]
 vaccine_efficacy_central_VE <- vaccine_efficacy_central[ which(vaccine_efficacy_central$mortality=='VE_data' & vaccine_efficacy_central$vaccine_efficacy== "cumulative"), ]
@@ -30,9 +31,9 @@ vaccine_efficacy_central_iVE_calc <- vaccine_efficacy_central[ which(vaccine_eff
 
 Plots for each waning function. 
 
-waning_gamma_01
+Waning (Power)
 
-```{r vaccine_efficacy_data_VE,vaccine_efficacy_data_iVE,vaccine_efficacy_central_VE,vaccine_efficacy_central_iVE,vaccine_efficacy_central_iVE_calc, include=FALSE, echo=FALSE}
+```{r ggplot2, echo=FALSE}
 VEdat <- ggplot()+
   geom_errorbar(data=vaccine_efficacy_data_VE, aes(x=follow_up_end, ymin=1-rr_high, ymax=1-rr_low))+
   geom_point(data=vaccine_efficacy_data_VE, aes(x=follow_up_end, y=1-rr, size=(cases_vaccine + cases_placebo)))+
