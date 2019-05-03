@@ -44,11 +44,11 @@ model <- c(
   "waning_none", "waning_linear", "waning_power",
   "waning_power_01", "waning_power2", "waning_power3",
   "waning_sigmoid", "waning_sigmoid_01", "waning_gamma_01"
-)[9]
+)[3]
 
 #set mcmc options
 mcmc.chains <- 2
-mcmc.length <- 100000
+mcmc.length <- 1000
 thin <- 4 ## change thins to 10 if you have issues getting the P values
 
 #run the models with rjags. This will create 3 data-tables: posterior_low,
