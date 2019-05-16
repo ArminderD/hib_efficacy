@@ -74,7 +74,7 @@ NumericVector cumVEtoInsFast(
 ```
 
 
-This is where the dataframe is read in (rotavirus_vaccine_efficacy_extracted.csv is in face Hib data but with file name unchanged from Kevin's original code) and prepared for analysis and where the RR is calculated. 
+This is where the dataframe is read in (rotavirus_vaccine_efficacy_extracted.csv is in fact Hib data but with file name unchanged from Kevin's original code) and prepared for analysis and where the RR is calculated. In this chunk of code, the cumulative vaccine efficacy and 95% CI's are also developed.
 
 ```{r}
 #prepare extracted data pooled analysis
@@ -185,7 +185,7 @@ vaccine_efficacy_data[, "mortality_factor"] <- factor(
 
 The models are then fit using rjags. 
 
-The waning functions used in the fittings are below in the rjags languge. 
+The waning functions used in the fittings are below in the rjags languge. The GLMM model is below for the various waning functions, using the study as the random effect variable -> study_specific_rr[ID[i]]. The waning functions are added after this, e.g. exp(alpha)*log( timept[i] ) for waning-linear. 
 
 ``` {r}
 library(rjags)
@@ -566,6 +566,11 @@ for(m in c("VE_data", "iVE_data")){
 }
 #months in which VE and iVE should be estimated
 times <- seq(0.5,36,0.5)
+```
+
+This is where cumulative vaccine efficacy and instantaneous vaccine efficacy is calculated (with 95% credible interval bands) using the model outputs. 
+
+``` {r echo=T, results='hide', warning = FALSE}
 
 #process modelled results
 # generate VE and iVE for each saved draw from the joint posterior distribution)
