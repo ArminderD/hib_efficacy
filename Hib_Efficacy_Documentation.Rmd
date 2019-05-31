@@ -762,8 +762,8 @@ VEdat <- ggplot()+
   
 
 if(!is.null(vaccine_efficacy_central_VE)){
-  VEdat <- VEdat +geom_ribbon(data=vaccine_efficacy_central_VE,aes(x=time, ymin=low, ymax=high), alpha=0.2)+
-    geom_line(data=vaccine_efficacy_central_VE,aes(x=time,y=median))+
+  VEdat <- VEdat +geom_ribbon(data=vaccine_efficacy_central_VE,aes(x=time, ymin=low, ymax=high), alpha=0.2)+ # the grey ribbon
+    geom_line(data=vaccine_efficacy_central_VE,aes(x=time,y=median))+ ### the median line in the grey ribbon
     theme_bw()+
     theme(axis.text=element_text(size=10),
           axis.title=element_text(size=14,face="bold"),
@@ -788,8 +788,8 @@ iVEdat <- ggplot()+
 
 
 if(!is.null(vaccine_efficacy_central_iVE)){
-  iVEdat <- iVEdat +geom_ribbon(data=vaccine_efficacy_central_iVE,aes(x=time, ymin=low, ymax=high), alpha=0.2)+
-    geom_line(data=vaccine_efficacy_central_iVE,aes(x=time,y=median))+
+  iVEdat <- iVEdat +geom_ribbon(data=vaccine_efficacy_central_iVE,aes(x=time, ymin=low, ymax=high), alpha=0.2)+ # the grey ribbon
+    geom_line(data=vaccine_efficacy_central_iVE,aes(x=time,y=median))+ ### the median line in the grey ribbon
     theme_bw()+
     theme(axis.text=element_text(size=10),
           axis.title=element_text(size=14,face="bold"),
@@ -801,8 +801,8 @@ if(!is.null(vaccine_efficacy_central_iVE)){
 ##### Instantaneous Vaccine Efficacy Calculated from cumulative VE #####
 
 iVEdat_cal <- ggplot()+
-geom_ribbon(data=vaccine_efficacy_central_iVE_calc,aes(x=time, ymin=low, ymax=high), alpha=0.2)+
-  geom_line(data=vaccine_efficacy_central_iVE_calc,aes(x=time,y=median))+
+geom_ribbon(data=vaccine_efficacy_central_iVE_calc,aes(x=time, ymin=low, ymax=high), alpha=0.2)+ # the grey ribbon
+  geom_line(data=vaccine_efficacy_central_iVE_calc,aes(x=time,y=median))+ ### the median line in the grey ribbon
   ggtitle("Instantaneous Vaccine Efficacy Derived\nfrom Cumulative Vaccine Efficacy") +
   theme_bw()+
   labs(x="", y="")+
@@ -814,5 +814,38 @@ geom_ribbon(data=vaccine_efficacy_central_iVE_calc,aes(x=time, ymin=low, ymax=hi
         plot.title = element_text(colour = "grey39"))
 
 grid.arrange(VEdat,iVEdat,iVEdat_cal, ncol=3)
+
+```
+
+In order to produce a fourth plot to combine the likelihoods from iVEdat ("Instantaneous Vaccine Efficacy") and iVEdat_cal ("Instantaneous Vaccine Efficacy Derived Cumulative Vaccine Efficacy"), one possible method is to derive the mean likelihoods from each model: 
+
+```{r echo=T, results='hide', warning = FALSE}
+
+### First merge the datasets
+
+iVEcomb <- merge (vaccine_efficacy_central_VE,vaccine_efficacy_central_iVE_calc, by="time")
+
+## now make separate columns of the mean of both median, low and high columns
+
+iVEcomb$mean.median <- (iVEcomb$median.x+iVEcomb$median.y) /2
+iVEcomb$mean.low <- (iVEcomb$low.x+iVEcomb$low.y) /2
+iVEcomb$mean.high <- (iVEcomb$high.x+iVEcomb$high.y) /2
+
+#### PLOT
+
+iVEdat_combined_likelihoods <- ggplot()+
+geom_ribbon(data=iVEcomb,aes(x=time, ymin=mean.low, ymax=mean.high), alpha=0.2)+ # the grey ribbon
+  geom_line(data=iVEcomb,aes(x=time,y=mean.median))+ ### the median line in the grey ribbon
+  ggtitle("Combined: iVE derived from VE + iVE from data") +
+  theme_bw()+
+  labs(x="", y="")+
+  geom_hline(yintercept=0)+
+  theme(axis.text=element_text(size=10),
+        axis.title=element_text(size=14,face="bold"),
+        legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        plot.title = element_text(colour = "grey39"))
+
+grid.arrange(VEdat,iVEdat,iVEdat_cal,iVEdat_combined_likelihoods, ncol=2, nrow=2)
 
 ```
