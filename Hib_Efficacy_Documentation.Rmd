@@ -935,7 +935,7 @@ geom_ribbon(data=iVEcomb,aes(x=time, ymin=mean.low, ymax=mean.high), alpha=0.2)+
   labs(x="", y="")+
   geom_hline(yintercept=0)+
   theme(axis.text=element_text(size=10),
-        axis.title=element_text(size=14,face="bold"),
+        axis.title=element_text(size=14,face="bold"),                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
         legend.text = element_text(size=10),
         legend.title = element_text(size=12),
         plot.title = element_text(colour = "grey39"))
