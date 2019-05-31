@@ -838,6 +838,85 @@ geom_ribbon(data=iVEcomb,aes(x=time, ymin=mean.low, ymax=mean.high), alpha=0.2)+
   geom_line(data=iVEcomb,aes(x=time,y=mean.median))+ ### the median line in the grey ribbon
   ggtitle("Combined: iVE derived from VE + iVE from data") +
   theme_bw()+
+  labs(x="Months since completed vaccine schedule", y="Vaccine efficacy (prop)\n")+
+  geom_hline(yintercept=0)+
+  theme(axis.text=element_text(size=10),
+        axis.title=element_text(size=14,face="bold"),
+        legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        plot.title = element_text(colour = "grey39"))
+
+iVEdat_combined_likelihoods
+
+```
+
+
+To align al graphs in one grid
+
+
+```{r, echo=TRUE, fig.width=15,fig.height=15}
+
+vaccine_efficacy_data_VE <- vaccine_efficacy_data[ which(vaccine_efficacy_data$mortality=='VE_data'), ]
+vaccine_efficacy_data_iVE <- vaccine_efficacy_data[ which(vaccine_efficacy_data$mortality=='iVE_data'), ]
+vaccine_efficacy_central_VE <- vaccine_efficacy_central[ which(vaccine_efficacy_central$mortality=='VE_data' & vaccine_efficacy_central$vaccine_efficacy== "cumulative"), ]
+vaccine_efficacy_central_iVE <- vaccine_efficacy_central[ which(vaccine_efficacy_central$mortality=='iVE_data' & vaccine_efficacy_central$vaccine_efficacy== "cumulative"), ]
+vaccine_efficacy_central_iVE_calc <- vaccine_efficacy_central[ which(vaccine_efficacy_central$mortality=='VE_data' & vaccine_efficacy_central$vaccine_efficacy== "instantaneous"), ]
+
+VEdat <- ggplot()+
+  geom_errorbar(data=vaccine_efficacy_data_VE, aes(x=follow_up_end, ymin=1-rr_high, ymax=1-rr_low))+
+  geom_point(data=vaccine_efficacy_data_VE, aes(x=follow_up_end, y=1-rr, size=(cases_vaccine + cases_placebo)))+
+  coord_cartesian(ylim=c(0, 1), xlim=c(0.2, 36))+
+  ggtitle("Cumulative Vaccine Efficacy") +
+  labs(x="", y="")+
+  scale_size_continuous(range = c(0.5,2.5))+
+  guides(size="none")+
+  geom_hline(yintercept=0)
+  
+
+if(!is.null(vaccine_efficacy_central_VE)){
+  VEdat <- VEdat +geom_ribbon(data=vaccine_efficacy_central_VE,aes(x=time, ymin=low, ymax=high), alpha=0.2)+ # the grey ribbon
+    geom_line(data=vaccine_efficacy_central_VE,aes(x=time,y=median))+ ### the median line in the grey ribbon
+    theme_bw()+
+    theme(axis.text=element_text(size=10),
+          axis.title=element_text(size=14,face="bold"),
+          legend.text = element_text(size=10),
+          legend.title = element_text(size=12),
+          plot.title = element_text(colour = "grey39"))
+}
+
+
+##### Instantaneous Vaccine Efficacy #####
+
+iVEdat <- ggplot()+
+  geom_errorbar(data=vaccine_efficacy_data_iVE, aes(x=follow_up_end, ymin=1-rr_high, ymax=1-rr_low))+
+  geom_point(data=vaccine_efficacy_data_iVE, aes(x=follow_up_end, y=1-rr, size=(cases_vaccine + cases_placebo)))+
+  coord_cartesian(ylim=c(0, 1), xlim=c(0.2, 36))+
+  ggtitle("Instantaneous Vaccine Efficacy") +
+  #facet_grid(vaccine_efficacy~mortality_factor)+
+  labs(x="", y="")+
+  scale_size_continuous(range = c(0.5,2.5))+
+  guides(size="none")+
+  geom_hline(yintercept=0)
+
+
+if(!is.null(vaccine_efficacy_central_iVE)){
+  iVEdat <- iVEdat +geom_ribbon(data=vaccine_efficacy_central_iVE,aes(x=time, ymin=low, ymax=high), alpha=0.2)+ # the grey ribbon
+    geom_line(data=vaccine_efficacy_central_iVE,aes(x=time,y=median))+ ### the median line in the grey ribbon
+    theme_bw()+
+    theme(axis.text=element_text(size=10),
+          axis.title=element_text(size=14,face="bold"),
+          legend.text = element_text(size=10),
+          legend.title = element_text(size=12),
+          plot.title = element_text(colour = "grey39"))
+}
+
+##### Instantaneous Vaccine Efficacy Calculated from cumulative VE #####
+
+iVEdat_cal <- ggplot()+
+geom_ribbon(data=vaccine_efficacy_central_iVE_calc,aes(x=time, ymin=low, ymax=high), alpha=0.2)+ # the grey ribbon
+  geom_line(data=vaccine_efficacy_central_iVE_calc,aes(x=time,y=median))+ ### the median line in the grey ribbon
+  ggtitle("Instantaneous Vaccine Efficacy Derived\nfrom Cumulative Vaccine Efficacy") +
+  theme_bw()+
   labs(x="", y="")+
   geom_hline(yintercept=0)+
   theme(axis.text=element_text(size=10),
@@ -846,6 +925,22 @@ geom_ribbon(data=iVEcomb,aes(x=time, ymin=mean.low, ymax=mean.high), alpha=0.2)+
         legend.title = element_text(size=12),
         plot.title = element_text(colour = "grey39"))
 
-grid.arrange(VEdat,iVEdat,iVEdat_cal,iVEdat_combined_likelihoods, ncol=2, nrow=2)
+##### combined likelihoods from iVE and iVE calculated from VE
+
+iVEdat_combined_likelihoods <- ggplot()+
+geom_ribbon(data=iVEcomb,aes(x=time, ymin=mean.low, ymax=mean.high), alpha=0.2)+ # the grey ribbon
+  geom_line(data=iVEcomb,aes(x=time,y=mean.median))+ ### the median line in the grey ribbon
+  ggtitle("Combined: iVE derived from VE + iVE from data") +
+  theme_bw()+
+  labs(x="", y="")+
+  geom_hline(yintercept=0)+
+  theme(axis.text=element_text(size=10),
+        axis.title=element_text(size=14,face="bold"),
+        legend.text = element_text(size=10),
+        legend.title = element_text(size=12),
+        plot.title = element_text(colour = "grey39"))
+
+
+grid.arrange(VEdat,iVEdat,iVEdat_cal,iVEdat_combined_likelihoods, ncol=2, nrow=2, left = "Vaccine Efficacy", bottom= "Months since completed vaccine schedule")
 
 ```
